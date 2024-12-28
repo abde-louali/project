@@ -1,75 +1,101 @@
-<?php 
+<?php
 session_start();
+include '../Controller/StudentController.php'; // Inclure le contrôleur
+
+// Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['username'])) {
-    header('location:Login.php');
+    header('location:Login.php'); // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
     exit;
 } else {
-    include "../Model/conx.php";
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Submission</title>
-</head>
-<body>
-<?php 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $errors = [];
-    $cin = $_POST['cin'] ?? '';
-    $grp = $_POST['grp'] ?? '';
-    if (empty($cin)) {
-        $errors[] = "CIN is required.";
-    }
-    if (empty($grp)) {
-        $errors[] = "Group is required.";
-    }
-    $uploadedFiles = [];
-    $fileFields = ['bac', 'cin_pic', 'brth'];
-    foreach ($fileFields as $field) {
-        if (isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK) {
-            $fileTmpPath = $_FILES[$field]['tmp_name'];
-            $fileContent = file_get_contents($fileTmpPath);
-            $uploadedFiles[$field] = $fileContent;
-        } else {
-            $errors[] = ucfirst($field) . " file is required.";
-        }
-    }
-    if (empty($errors)) {
-        $insert = Insertdata($cin, $grp, $uploadedFiles['bac'], $uploadedFiles['cin_pic'], $uploadedFiles['brth']);
-        if ($insert) {
-            echo "<p>Data successfully inserted!</p>";
-        } else {
-            echo "<p>Failed to insert data. Please try again.</p>";
-        }
+    // Récupérer les informations de l'étudiant à partir du CIN
+    $cin = $_SESSION['username'];
+    $studentController = new StudentController();
+    $studentInfo = $studentController->getStudentInfo($cin); 
+
+    if ($studentInfo) {
+        $name = $studentInfo['s_fname'];
+        $prenom = $studentInfo['s_lname'];
+        $group = $studentInfo['code_class'];
     } else {
-        foreach ($errors as $error) {
-            echo "<p style='color:red;'>$error</p>";
-        }
+        echo "Aucune information trouvée.";
+        exit;
+    }
+
+    // Déterminer le message de bienvenue selon l'heure
+    $heure = date("H");
+    if ($heure < 12) {
+        $message_bienvenue = "Bonjour $name $prenom !";
+    } else {
+        $message_bienvenue = "Bonsoir $name $prenom !";
     }
 }
 ?>
-    <h1>Hello</h1> 
-    
-    <form action="" method="POST" enctype="multipart/form-data">
-        <label for="text1">CIN:</label>
-        <input type="text"  name="cin" required><br><br>
 
-        <label for="text2">Group:</label>
-        <input type="text"  name="grp" required><br><br>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Étudiant | OFPPT</title>
+    <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Lien vers votre fichier CSS -->
+</head>
+<body>
+    <div class="profile-container">
+        <header class="header">
+            <img src="../assets/img/ofppt_logo.png" alt="OFPPT Logo" class="logo">
+            <h1><?php echo $message_bienvenue; ?></h1>
+        </header>
 
-        <label for="file1">Bac Image:</label>
-        <input type="file"  name="bac" required><br><br>
+        <div class="profile-box">
+            <?php
+            // Afficher le message de statut
+            if (isset($_GET['status'])) {
+                if ($_GET['status'] === 'success') {
+                    echo '<p class="success-message">Les informations ont été mises à jour avec succès.</p>';
+                } elseif ($_GET['status'] === 'error') {
+                    echo '<p class="error-message">Erreur lors de la mise à jour des informations. Veuillez réessayer.</p>';
+                }
+            }
+            ?>
 
-        <label for="file2">CIN Image:</label>
-        <input type="file"  name="cin_pic" required><br><br>
+            <form action="../Controller/StudentController.php" method="POST" enctype="multipart/form-data">
+                <!-- Champ CIN -->
+                <div class="input-group">
+                    <label for="cin">CIN</label>
+                    <input type="text" id="cin" name="cin_display" value="<?php echo htmlspecialchars($cin ?? 'Non défini'); ?>" disabled>
+                    <input type="hidden" name="cin" value="<?php echo htmlspecialchars($cin); ?>">
+                </div>
 
-        <label for="file3">Birth Certificate Image:</label>
-        <input type="file"  name="brth" required><br><br>
+                <!-- Champ Groupe -->
+                <div class="input-group">
+                    <label for="group">Groupe</label>
+                    <input type="text" id="group" name="group_display" value="<?php echo htmlspecialchars($group ?? 'Non défini'); ?>" disabled>
+                    <input type="hidden" name="group" value="<?php echo htmlspecialchars($group); ?>">
+                </div>
 
-        <button type="submit">Submit</button>
-    </form>
+                <!-- Fichiers uploadés -->
+                <div class="input-group">
+                    <label for="bac_img">Ajouter l'image du Bac</label>
+                    <input type="file" name="bac_img" id="bac_img" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="id_card_img">Ajouter l'image de la carte d'identité</label>
+                    <input type="file" name="id_card_img" id="id_card_img" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="birth_img">Ajouter l'image de l'acte de naissance</label>
+                    <input type="file" name="birth_img" id="birth_img" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Envoyer</button>
+            </form>
+
+            <form action="../Controller/UserController.php?action=logout" method="POST">
+                <button type="submit" class="btn-logout">Se déconnecter</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
-<?php } ?>
