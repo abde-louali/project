@@ -1,12 +1,14 @@
 <?php
 session_start();
-// if (!isset($_SESSION["succes"]["username"])) {
-//     header("location: Login.php");
-//     exit();
-// }
+
+if (!isset($_SESSION["username"])) {
+    header("location: Login.php");
+    exit();
+}
 
 include "./Header.php"; 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,11 +65,13 @@ include "./Header.php";
         </div>
 
         <div class="mt-4">
-            
-        <form action="../Controller/UserController.php?action=logout" method="POST">
+     
+            <form action="../Controller/UserController.php?action=logout" method="POST">
                 <button type="submit" class="btn-logout">Log out</button>
             </form>
         </div>
     </div>
+
+   
 </body>
 </html>
