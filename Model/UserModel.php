@@ -9,12 +9,36 @@ class UserModel {
     }
 
     public function login($username, $password) {
-        $query = "SELECT cin, code_class FROM classes WHERE cin = :username ";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute([
-            ':username' => $username
+        // Check for user in the students table (cin is both the username and password)
+        $queryStudent = "SELECT cin AS username, code_class AS group_name FROM classes WHERE cin = :username AND cin = :password";
+        $stmtStudent = $this->db->prepare($queryStudent);
+        $stmtStudent->execute([
+            ':username' => $username,
+            ':password' => $password
         ]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $student = $stmtStudent->fetch(PDO::FETCH_ASSOC);
+
+        if ($student) {
+            $student['user_type'] = 'student'; 
+            return $student;
+        }
+        $queryAdmin = "SELECT username FROM `ADMIN` WHERE username = :username AND PASSWORD = :password";
+        $stmtAdmin = $this->db->prepare($queryAdmin);
+        $stmtAdmin->execute([
+            ':username' => $username,  
+            ':password' => $password   
+        ]);
+
+        $admin = $stmtAdmin->fetch(PDO::FETCH_ASSOC);
+
+        if ($admin) {
+            $admin['user_type'] = 'admin'; 
+            return $admin;
+        }
+
+      
+        return null;
     }
 }
 ?>

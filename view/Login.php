@@ -2,28 +2,25 @@
 session_start();
 include '../Controller/UserController.php';
 
-// Rediriger si l'utilisateur est déjà connecté
-// if (isset($_SESSION['username'])) {
-//     header('Location: Profile.php');
-//     exit;
-// }
+// Redirect if the user is already logged in
+if (isset($_SESSION['username'])) {
+    if ($_SESSION['user_type'] === 'admin') {
+        header('Location: Admin.php');
+    } else {
+        header('Location: Profile.php');
+    }
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     $userController = new UserController();
-    $user = $userController->login($username, $password);
-
-    if ($user) {
-        $_SESSION['username'] = $user['cin']; // Enregistrer le CIN dans la session
-        header('Location: Profile.php');
-        exit;
-    } else {
-        $error_message = "Identifiants incorrects.";
-    }
+    $userController->login($username, $password); // Handles redirection
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -44,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
             <div class="input-group">
-                <label for="username">CIN</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter CIN">
             </div>
             <div class="input-group">
                 <label for="password">Mot de passe</label>
