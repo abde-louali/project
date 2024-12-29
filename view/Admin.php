@@ -55,19 +55,18 @@ include "./Header.php";
     </style>
 </head>
 <body>
-    <div class="container dashboard-container">
-        <h1 class="display-4">Hello, Admin</h1>
+<div class="container dashboard-container">
+        <h1 class="display-4">Bonjour, Administrateur</h1>
         
         <div class="teacher-info">
-            <h2>Your Admin Dashboard</h2>
-            <p>Welcome to your personalized admin area. Here, you can manage students, view progress, and perform other tasks.</p>
-            <p>Explore the menu above to get started.</p>
+            <h2>Votre Tableau de Bord Administrateur</h2>
+            <p>Bienvenue dans votre espace administrateur personnalisé. Ici, vous pouvez gérer les étudiants, consulter leurs progrès et effectuer d'autres tâches.</p>
+            <p>Explorez le menu ci-dessus pour commencer.</p>
         </div>
 
         <div class="mt-4">
-     
             <form action="../Controller/UserController.php?action=logout" method="POST">
-                <button type="submit" class="btn-logout">Log out</button>
+                <button type="submit" class="btn-logout">Se déconnecter</button>
             </form>
         </div>
     </div>

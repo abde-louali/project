@@ -50,10 +50,12 @@ if (!isset($_SESSION['username'])) {
             <?php
             // Afficher le message de statut
             if (isset($_GET['status'])) {
-                if ($_GET['status'] === 'success') {
-                    echo '<p class="success-message">Les informations ont été mises à jour avec succès.</p>';
+                if ($_GET['status'] === 'added') {
+                    echo '<p class="success-message">Les informations ont été ajoutées avec succès.</p>';
+                } elseif ($_GET['status'] === 'updated') {
+                    echo '<p class="success-message">Les informations ont été modifiées avec succès.</p>';
                 } elseif ($_GET['status'] === 'error') {
-                    echo '<p class="error-message">Erreur lors de la mise à jour des informations. Veuillez réessayer.</p>';
+                    echo '<p class="error-message">Erreur lors de l\'ajout ou de la modification des informations. Veuillez réessayer.</p>';
                 }
             }
             ?>
