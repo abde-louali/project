@@ -21,14 +21,14 @@ USE `ista_project`;
 
 -- Dumping structure for table ista_project.admin
 CREATE TABLE IF NOT EXISTS `admin` (
-  `code_admin` varchar(20) NOT NULL,
   `username` varchar(40) DEFAULT NULL,
-  `PASSWORD` varchar(40) DEFAULT NULL,
-  PRIMARY KEY (`code_admin`)
+  `PASSWORD` varchar(40) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table ista_project.admin: ~0 rows (approximately)
+-- Dumping data for table ista_project.admin: ~1 rows (approximately)
 DELETE FROM `admin`;
+INSERT INTO `admin` (`username`, `PASSWORD`) VALUES
+	('Aziza', 'admin');
 
 -- Dumping structure for table ista_project.classes
 CREATE TABLE IF NOT EXISTS `classes` (
