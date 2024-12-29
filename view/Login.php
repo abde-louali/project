@@ -3,10 +3,10 @@ session_start();
 include '../Controller/UserController.php';
 
 // Rediriger si l'utilisateur est déjà connecté
-if (isset($_SESSION['username'])) {
-    header('Location: Profile.php');
-    exit;
-}
+// if (isset($_SESSION['username'])) {
+//     header('Location: Profile.php');
+//     exit;
+// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
