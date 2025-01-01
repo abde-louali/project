@@ -3,6 +3,7 @@
 require_once '../Model/StudentModel.php';
 
 class AdminController {
+
     public function createFolder() {
         // Vérification de la soumission du formulaire
         if (isset($_POST['create_folder'])) {

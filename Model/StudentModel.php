@@ -1,5 +1,5 @@
 <?php
-include_once '../Model/conx.php'; // Inclure la classe Database
+include_once '../Model/conx.php'; 
 
 class StudentModel {
     private $db;
