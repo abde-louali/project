@@ -41,12 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
             <div class="input-group">
-                <label for="username">Username</label>
+                <label for="username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username" required placeholder="Enter CIN">
             </div>
             <div class="input-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required placeholder="Enter Mot de passe">
             </div>
             <button type="submit" class="btn-submit">Se connecter</button>
         </form>
