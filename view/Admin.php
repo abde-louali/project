@@ -5,7 +5,12 @@ if (!isset($_SESSION["username"])) {
     header("location: Login.php");
     exit();
 }
-
+$heure = date("H");
+    if ($heure < 12) {
+        $message_bienvenue = "Bonjour  !";
+    } else {
+        $message_bienvenue = "Bonsoir  !";
+    }
 include "./Header.php"; 
 ?>
 
@@ -17,42 +22,8 @@ include "./Header.php";
     <title>Admin Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        body {
-            background-color: #f8f9fc; /* Light background for contrast */
-        }
-        .dashboard-container {
-            margin-top: 50px;
-        }
-        .teacher-info {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-        .teacher-info h2 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .teacher-info p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        .btn-logout {
-            background-color: #e74a3b;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            padding: 10px 20px;
-            text-decoration: none;
-        }
-        .btn-logout:hover {
-            background-color: #c0392b;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/style1.css">
+    <script src="../assets/js/scripts.js"></script>
 </head>
 <body>
 <?php
@@ -75,7 +46,7 @@ if (isset($_GET['status']) && isset($_GET['message'])) {
 ?>
 
 <div class="container dashboard-container">
-        <h1 class="display-4">Bonjour, Administrateur</h1>
+        <h1><?php echo $message_bienvenue; ?></h1>
         
         <div class="teacher-info">
             <h2>Votre Tableau de Bord Administrateur</h2>
@@ -87,29 +58,20 @@ if (isset($_GET['status']) && isset($_GET['message'])) {
         <div class="teacher-info">
             <h2>Modifier le Mot de Passe</h2>
             <form action="../Controller/changePasswordController.php" method="POST" onsubmit="return validatePassword()">
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label for="currentPassword" class="form-label">Mot de passe actuel</label>
                     <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="showCurrentPassword">
-                        <label class="form-check-label" for="showCurrentPassword">Voir le mot de passe</label>
-                    </div>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('currentPassword', this)">👁</span>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label for="newPassword" class="form-label">Nouveau mot de passe</label>
                     <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="showNewPassword">
-                        <label class="form-check-label" for="showNewPassword">Voir le mot de passe</label>
-                    </div>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('newPassword', this)">👁</span>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label for="confirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="showConfirmPassword">
-                        <label class="form-check-label" for="showConfirmPassword">Voir le mot de passe</label>
-                    </div>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)">👁</span>
                 </div>
                 <button type="submit" class="btn btn-primary">Modifier</button>
             </form>
@@ -124,42 +86,7 @@ if (isset($_GET['status']) && isset($_GET['message'])) {
 </div>
 
 <!-- Validation du mot de passe en JavaScript -->
-<script>
-    // Fonction pour valider les mots de passe
-    function validatePassword() {
-        var newPassword = document.getElementById("newPassword").value;
-        var confirmPassword = document.getElementById("confirmPassword").value;
 
-        if (newPassword !== confirmPassword) {
-            alert("Les mots de passe ne correspondent pas.");
-            return false;
-        }
-
-        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$/;
-        if (!passwordPattern.test(newPassword)) {
-            alert("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-            return false;
-        }
-
-        return true;
-    }
-
-    // Fonction pour afficher ou masquer les mots de passe
-    document.getElementById("showCurrentPassword").addEventListener('change', function() {
-        var currentPasswordField = document.getElementById("currentPassword");
-        currentPasswordField.type = this.checked ? 'text' : 'password';
-    });
-
-    document.getElementById("showNewPassword").addEventListener('change', function() {
-        var newPasswordField = document.getElementById("newPassword");
-        newPasswordField.type = this.checked ? 'text' : 'password';
-    });
-
-    document.getElementById("showConfirmPassword").addEventListener('change', function() {
-        var confirmPasswordField = document.getElementById("confirmPassword");
-        confirmPasswordField.type = this.checked ? 'text' : 'password';
-    });
-</script>
 
 </body>
 </html>
