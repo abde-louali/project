@@ -1,4 +1,5 @@
 <?php
+
 include_once '../Model/conx.php';
 
 class AdminModel {
@@ -23,3 +24,4 @@ class AdminModel {
         }
     }
 }
+

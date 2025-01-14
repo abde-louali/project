@@ -1,0 +1,48 @@
+body {
+    background-color: #f8f9fc; /* Light background for contrast */
+}
+.dashboard-container {
+    margin-top: 50px;
+}
+.teacher-info {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+.teacher-info h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+.teacher-info p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+.btn-logout {
+    background-color: #e74a3b;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+.btn-logout:hover {
+    background-color: #c0392b;
+}
+.position-relative {
+position: relative;
+}
+.position-relative {
+position: relative;
+}
+.toggle-password {
+position: absolute;
+right: 10px;
+top: 67%;
+transform: translateY(-50%);
+cursor: pointer;
+font-size: 20px;
+}

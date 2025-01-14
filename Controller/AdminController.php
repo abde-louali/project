@@ -1,4 +1,5 @@
 <?php
+
 include_once '../Model/AdminModel.php';
 
 class AdminController {
@@ -22,3 +23,4 @@ class AdminController {
         }
     }
 }
+
