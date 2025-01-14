@@ -35,11 +35,9 @@ if (isset($_GET['status']) && isset($_GET['message'])) {
     // Affichage d'une image et du message d'erreur ou de succès
     if ($status == "error") {
         echo '<div class="alert alert-danger">';
-        echo '<img src="assets/images/error.png" alt="Erreur" style="width: 50px; height: 50px;"> ';
         echo htmlspecialchars($message) . '</div>';
     } elseif ($status == "success") {
         echo '<div class="alert alert-success">';
-        echo '<img src="assets/images/success.png" alt="Succès" style="width: 50px; height: 50px;"> ';
         echo htmlspecialchars($message) . '</div>';
     }
 }

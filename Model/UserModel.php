@@ -23,7 +23,7 @@ class UserModel {
             $student['user_type'] = 'student'; 
             return $student;
         }
-        $queryAdmin = "SELECT username FROM `ADMIN` WHERE username = :username AND PASSWORD = :password";
+        $queryAdmin = "SELECT username FROM `admin` WHERE username = :username AND PASSWORD = :password";
         $stmtAdmin = $this->db->prepare($queryAdmin);
         $stmtAdmin->execute([
             ':username' => $username,  

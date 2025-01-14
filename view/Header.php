@@ -41,7 +41,7 @@
                     <a class="nav-link" href="./Admin.php">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./ajouterCla.php">Ajouter une Classe</a>
+                    <a class="nav-link" href="./ajouterCla.php">Ajouter stagiaires</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./classes.php">Classes</a>

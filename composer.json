@@ -1,0 +1,17 @@
+{
+    "name": "hp/project",
+    "autoload": {
+        "psr-4": {
+            "Hp\\Project\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nisrine",
+            "email": "nisrine@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^3.8"
+    }
+}
