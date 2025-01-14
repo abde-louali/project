@@ -1,19 +1,18 @@
 <?php
-// View/classes.php
+
 session_start();
 
-// Check if user is logged in and is admin
-// if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
-//     header('Location: ../View/Login.php');
-//     exit;
-// }
 
-// Include the AdminController
+if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
+    header('Location: ../View/Login.php');
+    exit;
+}
+
 include_once '../Controller/AdminController.php';
 
-// Instantiate the AdminController and call the displayFilieres method
+
 $adminController = new AdminController();
-$filieres = $adminController->displayFilieres(); // Fetch the filières data
+$filieres = $adminController->displayFilieres(); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +67,6 @@ $filieres = $adminController->displayFilieres(); // Fetch the filières data
         </div>
     </div>
 
-    <!-- Bootstrap Modal -->
     <div class="modal fade" id="classesModal" tabindex="-1" aria-labelledby="classesModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -77,7 +75,7 @@ $filieres = $adminController->displayFilieres(); // Fetch the filières data
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Classes will be loaded here dynamically -->
+                  
                     <div id="classesList"></div>
                 </div>
                 <div class="modal-footer">
@@ -87,37 +85,38 @@ $filieres = $adminController->displayFilieres(); // Fetch the filières data
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery (for AJAX) -->
+ 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        // JavaScript to handle the "View Classes" button click
+     
         $(document).ready(function () {
             $('.view-classes-btn').on('click', function () {
                 const filiere = $(this).data('filiere'); // Get the selected filière
-                $('#filiereName').text(filiere); // Set the filière name in the modal title
+                $('#filiereName').text(filiere); 
 
                 // Fetch classes for the selected filière using AJAX
                 $.ajax({
-                    url: 'fetch_classes.php', // PHP script to fetch classes
+                    url: 'fetch_classes.php', 
                     type: 'GET',
                     data: { filiere: filiere },
                     success: function (response) {
-                        $('#classesList').html(response); // Display the classes in the modal
+                        $('#classesList').html(response); 
                     },
                     error: function (xhr, status, error) {
-                        $('#classesList').html('<p>Error loading classes.</p>'); // Show error message
+                        $('#classesList').html('<p>Error loading classes.</p>'); 
                     }
                 });
             });
 
             // Handle class button clicks (for future navigation)
             $(document).on('click', '.class-btn', function () {
-                const selectedClass = $(this).data('class'); // Get the selected class
-                alert('You clicked on: ' + selectedClass); // Replace this with your navigation logic
-                // Example: window.location.href = 'class_details.php?class=' + selectedClass;
-            });
+    const selectedClass = $(this).data('class'); 
+    const filiere = $('#filiereName').text(); 
+
+    window.location.href = 'student_details.php?class=' + encodeURIComponent(selectedClass) + '&filiere=' + encodeURIComponent(filiere);
+});
         });
     </script>
 </body>
