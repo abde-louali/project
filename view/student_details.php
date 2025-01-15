@@ -79,8 +79,23 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
                 No students found for this class who have uploaded all required documents.
             </div>
         <?php endif; ?>
+        <button id="createFolders" class="btn btn-primary mb-3">Créer les dossiers nécessaires</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById('createFolders').addEventListener('click', function () {
+        fetch('../Model/create_folders.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Tous les dossiers nécessaires ont été créés avec succès.');
+                } else {
+                    alert('Erreur lors de la création des dossiers : ' + data.error);
+                }
+            })
+            .catch(error => console.error('Erreur :', error));
+    });
+</script>
 </body>
 </html>
