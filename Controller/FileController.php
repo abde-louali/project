@@ -20,6 +20,7 @@ class FileController {
         return $path;
     }
 
+    
     public function findDocument($basePath) {
         if (!$basePath) {
             error_log("Base path is empty");

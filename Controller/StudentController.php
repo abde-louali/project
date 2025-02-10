@@ -11,6 +11,7 @@ class StudentController {
     public function getStudentDetails($cin, $code_class) {
         return $this->studentModel->getStudentDetails($cin, $code_class);
     }
+    
 
     public function getStudentInfo($cin) {
         return $this->studentModel->getStudentInfo($cin);

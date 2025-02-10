@@ -12,6 +12,7 @@ if (!isset($_SESSION['username'])) {
     $studentController = new StudentController();
     $studentInfo = $studentController->getStudentInfo($cin);
 
+    
     if ($studentInfo) {
         $name = $studentInfo['s_fname'];
         $prenom = $studentInfo['s_lname'];
