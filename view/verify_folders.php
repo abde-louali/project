@@ -139,6 +139,7 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
         echo '<th>Student Name</th>';
         echo '<th>Status</th>';
         echo '<th>Verified Name</th>';
+        echo '<th>Details</th>';
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';
@@ -160,6 +161,30 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
                 echo '<td>' . htmlspecialchars($studentName) . '</td>';
                 echo '<td><span class="status ' . $statusClass . '">' . $statusText . '</span></td>';
                 echo '<td>' . ($result['verified_name'] ? htmlspecialchars($result['verified_name']) : 'N/A') . '</td>';
+                echo '<td>';
+                
+                // Display file details
+                if (!empty($result['file_details'])) {
+                    echo '<ul class="file-details">';
+                    foreach ($result['file_details'] as $detail) {
+                        echo '<li>';
+                        echo '<strong>' . htmlspecialchars($detail['file']) . '</strong>: ';
+                        echo $detail['extracted_name'] ? htmlspecialchars($detail['extracted_name']) : 'No name extracted';
+                        echo '</li>';
+                    }
+                    echo '</ul>';
+                }
+                
+                // Display errors if any
+                if (!empty($result['errors'])) {
+                    echo '<ul class="error-list">';
+                    foreach ($result['errors'] as $error) {
+                        echo '<li><strong>' . htmlspecialchars($error['file']) . '</strong>: ' . 
+                             htmlspecialchars($error['error']) . '</li>';
+                    }
+                    echo '</ul>';
+                }
+                echo '</td>';
                 echo '</tr>';
             }
         }
@@ -286,6 +311,30 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
             border-radius: 4px;
             margin: 20px 0;
             text-align: center;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-list li {
+            color: #c62828;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .file-details {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .file-details li {
+            color: #2c3e50;
+            font-size: 0.9em;
+            margin-bottom: 5px;
         }
     </style>
 </head>
