@@ -28,23 +28,23 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
     // Sanitize the input by replacing spaces with underscores
     $class = trim(str_replace(' ', '_', $_GET['class']));
     $filiere = trim(str_replace(' ', '_', $_GET['filiere']));
-    
+
     // Get students data first
     $students = $adminController->getStudentsByClass($class, $filiere);
-    
+
     if (empty($students)) {
         die("No students found for this class and filiere combination.");
     }
 
     // Create the directory structure if it doesn't exist
-    $base_path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR 
-                . str_replace('_', ' ', $filiere) . DIRECTORY_SEPARATOR 
-                . str_replace('_', ' ', $class);
+    $base_path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR
+        . str_replace('_', ' ', $filiere) . DIRECTORY_SEPARATOR
+        . str_replace('_', ' ', $class);
 
     // Check if there's a variant of the path with different spacing
     $parent_dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
     $possible_dirs = glob($parent_dir . DIRECTORY_SEPARATOR . "*{$filiere}*" . DIRECTORY_SEPARATOR . "*{$class}*", GLOB_BRACE);
-    
+
     if (!empty($possible_dirs)) {
         $base_path = $possible_dirs[0];
     } else if (!file_exists($base_path)) {
@@ -93,11 +93,11 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
                 $fileCount++;
             }
         }
-        
+
         if ($fileCount == 0) {
             die("Error: No files found in the directory to zip");
         }
-        
+
         if (!$zip->close()) {
             throw new Exception("Failed to close ZIP file");
         }
@@ -124,14 +124,14 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
     ]);
 
     $response = curl_exec($ch);
-    
+
     if (curl_errno($ch)) {
         echo '<div class="error-message">';
         echo 'Error: Failed to process the verification. Please try again later.';
         echo '</div>';
     } else {
         $results = json_decode($response, true);
-        
+
         echo '<table class="results-table">';
         echo '<thead>';
         echo '<tr>';
@@ -143,26 +143,26 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';
-        
+
         foreach ($results as $result) {
-            $student = array_filter($students, function($s) use ($result) {
+            $student = array_filter($students, function ($s) use ($result) {
                 return $s['cin'] === $result['cin'];
             });
             $student = reset($student);
-            
+
             if ($student) {
                 $studentName = $student['s_fname'] . ' ' . $student['s_lname'];
-                
+
                 $statusClass = $result['is_correct'] ? 'status-correct' : 'status-incorrect';
                 $statusText = $result['is_correct'] ? '✅ Correct' : '❌ Incorrect';
-                
+
                 echo '<tr>';
                 echo '<td>' . htmlspecialchars($result['cin']) . '</td>';
                 echo '<td>' . htmlspecialchars($studentName) . '</td>';
                 echo '<td><span class="status ' . $statusClass . '">' . $statusText . '</span></td>';
                 echo '<td>' . ($result['verified_name'] ? htmlspecialchars($result['verified_name']) : 'N/A') . '</td>';
                 echo '<td>';
-                
+
                 // Display file details
                 if (!empty($result['file_details'])) {
                     echo '<ul class="file-details">';
@@ -174,13 +174,13 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
                     }
                     echo '</ul>';
                 }
-                
+
                 // Display errors if any
                 if (!empty($result['errors'])) {
                     echo '<ul class="error-list">';
                     foreach ($result['errors'] as $error) {
-                        echo '<li><strong>' . htmlspecialchars($error['file']) . '</strong>: ' . 
-                             htmlspecialchars($error['error']) . '</li>';
+                        echo '<li><strong>' . htmlspecialchars($error['file']) . '</strong>: ' .
+                            htmlspecialchars($error['error']) . '</li>';
                     }
                     echo '</ul>';
                 }
@@ -188,7 +188,7 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
                 echo '</tr>';
             }
         }
-        
+
         echo '</tbody>';
         echo '</table>';
     }
@@ -205,6 +205,7 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -216,7 +217,7 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
             padding: 20px;
             background: #fff;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .header {
@@ -237,7 +238,7 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
             border-collapse: collapse;
             margin-top: 20px;
             background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .results-table th {
@@ -291,8 +292,13 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .error-message {
@@ -338,22 +344,23 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
         }
     </style>
 </head>
+
 <body>
 
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Show loading state when processing starts
-    document.getElementById('loading').style.display = 'block';
-    
-    // Hide loading state when results are shown
-    if (document.querySelector('.results-table')) {
-        document.getElementById('loading').style.display = 'none';
-    }
-});
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading state when processing starts
+            document.getElementById('loading').style.display = 'block';
+
+            // Hide loading state when results are shown
+            if (document.querySelector('.results-table')) {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
+
 </html>
-    
