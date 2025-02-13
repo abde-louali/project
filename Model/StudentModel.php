@@ -1,125 +1,163 @@
 <?php
-include_once '../Model/conx.php'; // Connexion à la base de données
+include_once '../Model/conx.php';
 
-class StudentModel {
+class StudentModel
+{
     private $db;
+    private $maxRetries = 3;
+    private $retryDelay = 1; // seconds
 
-    public function __construct() {
-        $this->connectToDatabase();
+    public function __construct()
+    {
+        $this->initializeConnection();
     }
 
-    // Reconnect to the database if the connection is lost
-    private function connectToDatabase() {
+    private function initializeConnection()
+    {
         try {
             $database = new Database();
             $this->db = $database->getConnection();
+            $this->configureConnection();
         } catch (PDOException $e) {
-            die("Erreur de connexion à la base de données : " . $e->getMessage());
+            error_log("Initial database connection error: " . $e->getMessage());
+            throw new Exception("Erreur de connexion à la base de données");
         }
     }
 
-    // Check if the connection is still alive
-    private function checkConnection() {
-        try {
-            $this->db->query('SELECT 1');
-        } catch (PDOException $e) {
-            // Reconnect if the connection is lost
-            $this->connectToDatabase();
+    private function configureConnection()
+    {
+        if ($this->db) {
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $this->db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+            // Configure session variables for larger data
+            $this->executeSafely("SET SESSION wait_timeout=300");
+            $this->executeSafely("SET SESSION interactive_timeout=300");
+            $this->executeSafely("SET SESSION max_allowed_packet=16777216"); // 16MB
         }
     }
 
-    // Vérifier si le CIN existe dans la table student
-    public function checkStudentExists($cin, $code_class, $filier_name) {
-        try {
-            $this->checkConnection(); // Ensure the connection is alive
-            $query = "SELECT COUNT(*) FROM student WHERE cin = :cin AND code_class = :code_class AND filier_name = :filier_name";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':cin', $cin, PDO::PARAM_STR);
-            $stmt->bindParam(':code_class', $code_class, PDO::PARAM_STR);
-            $stmt->bindParam(':filier_name', $filier_name, PDO::PARAM_STR);
-            $stmt->execute();
-            return $stmt->fetchColumn() > 0;
-        } catch (PDOException $e) {
-            error_log("Erreur lors de la vérification du CIN : " . $e->getMessage());
-            return false;
-        }
+    private function reconnect()
+    {
+        $this->db = null; // Close existing connection
+        $this->initializeConnection();
     }
 
-    public function getStudentInfo($cin) {
+    private function executeSafely($query, $params = [], $retryCount = 0)
+    {
         try {
-            $this->checkConnection(); // Ensure the connection is alive
-            $query = "SELECT * FROM classes WHERE cin = :cin";  // Interroger la table classes
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':cin', $cin);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des informations de l'étudiant : " . $e->getMessage());
-            return false;
-        }
-    }
+            if (!$this->db) {
+                $this->initializeConnection();
+            }
 
-    public function getStudentDetails($cin, $code_class) {
-        try {
-            $this->checkConnection(); // Ensure the connection is alive
-            $query = "SELECT s_fname, s_lname, filier_name FROM classes WHERE cin = :cin AND code_class = :code_class";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':cin', $cin);
-            $stmt->bindParam(':code_class', $code_class);
-            $stmt->execute();
-            
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($result) {
-                return $result;
+            if ($params) {
+                $stmt = $this->db->prepare($query);
+                $result = $stmt->execute($params);
+                return $stmt;
             } else {
-                return false;
+                return $this->db->exec($query);
             }
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des détails de l'étudiant : " . $e->getMessage());
-            return false;
+            if (
+                $retryCount < $this->maxRetries &&
+                (strpos($e->getMessage(), 'server has gone away') !== false ||
+                    strpos($e->getMessage(), 'Lost connection') !== false)
+            ) {
+
+                error_log("Connection lost, attempting reconnect. Attempt " . ($retryCount + 1));
+                sleep($this->retryDelay);
+                $this->reconnect();
+                return $this->executeSafely($query, $params, $retryCount + 1);
+            }
+            throw $e;
         }
     }
 
-    public function saveOrUpdateStudentFiles($cin, $code_class, $filier_name, $s_fname, $s_lname, $bac_img, $id_card_img, $birth_img) {
+    public function saveOrUpdateStudentFiles($cin, $code_class, $filier_name, $s_fname, $s_lname, $bac_img, $id_card_img, $birth_img)
+    {
         try {
-            if ($this->checkStudentExists($cin, $code_class, $filier_name)) {
-                // Requête UPDATE
+            $this->db->beginTransaction();
+
+            // Check if student exists
+            $exists = $this->checkStudentExists($cin, $code_class, $filier_name);
+
+            if ($exists) {
                 $query = "UPDATE student 
-                          SET bac_img = :bac_img, id_card_img = :id_card_img, birth_img = :birth_img
-                          WHERE cin = :cin AND code_class = :code_class AND filier_name = :filier_name";
-                $stmt = $this->db->prepare($query);
-    
-                // Lier uniquement les paramètres nécessaires pour l'UPDATE
-                $stmt->bindParam(':cin', $cin);
-                $stmt->bindParam(':code_class', $code_class);
-                $stmt->bindParam(':filier_name', $filier_name);
-                $stmt->bindParam(':bac_img', $bac_img, PDO::PARAM_LOB);
-                $stmt->bindParam(':id_card_img', $id_card_img, PDO::PARAM_LOB);
-                $stmt->bindParam(':birth_img', $birth_img, PDO::PARAM_LOB);
+                         SET bac_img = :bac_img, 
+                             id_card_img = :id_card_img, 
+                             birth_img = :birth_img
+                         WHERE cin = :cin 
+                         AND code_class = :code_class 
+                         AND filier_name = :filier_name";
+                $params = [
+                    ':cin' => $cin,
+                    ':code_class' => $code_class,
+                    ':filier_name' => $filier_name,
+                    ':bac_img' => $bac_img,
+                    ':id_card_img' => $id_card_img,
+                    ':birth_img' => $birth_img
+                ];
             } else {
-                // Requête INSERT
-                $query = "INSERT INTO student (cin, s_fname, s_lname, id_card_img, bac_img, birth_img, code_class, filier_name) 
-                          VALUES (:cin, :s_fname, :s_lname, :id_card_img, :bac_img, :birth_img, :code_class, :filier_name)";
-                $stmt = $this->db->prepare($query);
-    
-                // Lier tous les paramètres nécessaires pour l'INSERT
-                $stmt->bindParam(':cin', $cin);
-                $stmt->bindParam(':s_fname', $s_fname);
-                $stmt->bindParam(':s_lname', $s_lname);
-                $stmt->bindParam(':id_card_img', $id_card_img, PDO::PARAM_LOB);
-                $stmt->bindParam(':bac_img', $bac_img, PDO::PARAM_LOB);
-                $stmt->bindParam(':birth_img', $birth_img, PDO::PARAM_LOB);
-                $stmt->bindParam(':code_class', $code_class);
-                $stmt->bindParam(':filier_name', $filier_name);
+                $query = "INSERT INTO student (cin, s_fname, s_lname, id_card_img, bac_img, birth_img, 
+                         code_class, filier_name) 
+                         VALUES (:cin, :s_fname, :s_lname, :id_card_img, :bac_img, :birth_img, 
+                         :code_class, :filier_name)";
+                $params = [
+                    ':cin' => $cin,
+                    ':s_fname' => $s_fname,
+                    ':s_lname' => $s_lname,
+                    ':code_class' => $code_class,
+                    ':filier_name' => $filier_name,
+                    ':bac_img' => $bac_img,
+                    ':id_card_img' => $id_card_img,
+                    ':birth_img' => $birth_img
+                ];
             }
-    
-            // Exécuter la requête
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Erreur lors de la sauvegarde ou mise à jour des fichiers de l'étudiant : " . $e->getMessage());
-            return false;
+
+            $stmt = $this->executeSafely($query, $params);
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            if ($this->db && $this->db->inTransaction()) {
+                try {
+                    $this->db->rollBack();
+                } catch (PDOException $rollbackException) {
+                    error_log("Rollback failed: " . $rollbackException->getMessage());
+                }
+            }
+            error_log("Error in saveOrUpdateStudentFiles: " . $e->getMessage());
+            throw new Exception("Erreur lors de la sauvegarde des fichiers");
         }
     }
-    
+
+    public function checkStudentExists($cin, $code_class, $filier_name)
+    {
+        $query = "SELECT COUNT(*) FROM student WHERE cin = :cin AND code_class = :code_class AND filier_name = :filier_name";
+        $params = [
+            ':cin' => $cin,
+            ':code_class' => $code_class,
+            ':filier_name' => $filier_name
+        ];
+
+        $stmt = $this->executeSafely($query, $params);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function getStudentInfo($cin)
+    {
+        $query = "SELECT * FROM classes WHERE cin = :cin";
+        $stmt = $this->executeSafely($query, [':cin' => $cin]);
+        return $stmt->fetch();
+    }
+
+    public function getStudentDetails($cin, $code_class)
+    {
+        $query = "SELECT s_fname, s_lname, filier_name FROM classes WHERE cin = :cin AND code_class = :code_class";
+        $stmt = $this->executeSafely($query, [
+            ':cin' => $cin,
+            ':code_class' => $code_class
+        ]);
+        return $stmt->fetch();
+    }
 }
-?>
