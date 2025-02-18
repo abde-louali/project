@@ -10,11 +10,12 @@ include_once '../Model/AdminModel.php';
 $adminModel = new AdminModel();
 $adminInfo = $adminModel->getAdminInfo($_SESSION["username"]);
 
-include "./Header.php"; 
+include "./Header.php";
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -149,7 +150,8 @@ include "./Header.php";
             margin-top: 1.5rem;
         }
 
-        .save-button, .cancel-button {
+        .save-button,
+        .cancel-button {
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 6px;
@@ -223,7 +225,10 @@ include "./Header.php";
             }
         }
     </style>
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
+
 <body>
     <div class="profile-container">
         <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
@@ -331,7 +336,7 @@ include "./Header.php";
         function toggleEdit() {
             const infoDisplay = document.getElementById('info-display');
             const editForm = document.getElementById('edit-form');
-            
+
             if (editForm.classList.contains('active')) {
                 editForm.classList.remove('active');
                 infoDisplay.style.display = 'grid';
@@ -376,4 +381,5 @@ include "./Header.php";
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

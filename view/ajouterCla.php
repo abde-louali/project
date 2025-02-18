@@ -24,7 +24,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $file = $_FILES['excel_file']['tmp_name'];
     $extension = pathinfo($_FILES['excel_file']['name'], PATHINFO_EXTENSION);
-    
+
     // Vérification de l'extension et de la taille du fichier
     if ($_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
         if ($extension == 'xlsx' || $extension == 'xls') {
@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -230,11 +231,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
             margin-right: 0.5rem !important;
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
+
 <body>
     <div class="container">
         <h1 class="page-title">Gestion des Classes</h1>
-        
+
         <?php if (!empty($message)): ?>
             <div class="alert alert-info">
                 <?php echo $message; ?>
@@ -277,24 +282,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
                     </thead>
                     <tbody>
                         <?php foreach ($classes as $classe): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($classe['cin']); ?></td>
-                            <td><?php echo htmlspecialchars($classe['s_lname']); ?></td>
-                            <td><?php echo htmlspecialchars($classe['s_fname']); ?></td>
-                            <td><?php echo htmlspecialchars($classe['filier_name']); ?></td>
-                            <td><?php echo htmlspecialchars($classe['code_class']); ?></td>
-                            <td><?php echo htmlspecialchars($classe['age']); ?></td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" 
-                                            class="btn btn-danger" 
+                            <tr>
+                                <td><?php echo htmlspecialchars($classe['cin']); ?></td>
+                                <td><?php echo htmlspecialchars($classe['s_lname']); ?></td>
+                                <td><?php echo htmlspecialchars($classe['s_fname']); ?></td>
+                                <td><?php echo htmlspecialchars($classe['filier_name']); ?></td>
+                                <td><?php echo htmlspecialchars($classe['code_class']); ?></td>
+                                <td><?php echo htmlspecialchars($classe['age']); ?></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button"
+                                            class="btn btn-danger"
                                             onclick="deleteStudent('<?php echo $classe['cin']; ?>')"
                                             title="Supprimer">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -316,59 +321,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
     <script>
-    $(document).ready(function() {
-        $('#classeTable').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: 'Copier'
-                },
-                {
-                    extend: 'csv',
-                    text: 'CSV'
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel'
-                },
-                {
-                    extend: 'pdf',
-                    text: 'PDF'
-                },
-                {
-                    extend: 'print',
-                    text: 'Imprimer'
-                }
-            ],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
-            },
-            pageLength: 10,
-            order: [[3, 'asc'], [4, 'asc']],
-            responsive: true
-        });
-    });
-
-    function deleteStudent(cin) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?')) {
-            $.ajax({
-                url: 'delete_student.php',
-                type: 'POST',
-                data: { cin: cin },
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert('Erreur lors de la suppression : ' + response.message);
+        $(document).ready(function() {
+            $('#classeTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'copy',
+                        text: 'Copier'
+                    },
+                    {
+                        extend: 'csv',
+                        text: 'CSV'
+                    },
+                    {
+                        extend: 'excel',
+                        text: 'Excel'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimer'
                     }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
                 },
-                error: function() {
-                    alert('Erreur lors de la communication avec le serveur');
-                }
+                pageLength: 10,
+                order: [
+                    [3, 'asc'],
+                    [4, 'asc']
+                ],
+                responsive: true
             });
+        });
+
+        function deleteStudent(cin) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?')) {
+                $.ajax({
+                    url: 'delete_student.php',
+                    type: 'POST',
+                    data: {
+                        cin: cin
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Erreur lors de la suppression : ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Erreur lors de la communication avec le serveur');
+                    }
+                });
+            }
         }
-    }
     </script>
 </body>
+
 </html>

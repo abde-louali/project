@@ -1,0 +1,104 @@
+/* darkmode.css - Save this in your assets/css folder */
+/* General dark mode styles */
+body.dark-mode {
+    color: #e4e6eb;
+    background-color: #121212;
+  }
+  
+  /* Dark mode styles for header */
+  body.dark-mode .navbar {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  }
+  
+  /* Dark mode styles for cards */
+  body.dark-mode .card,
+  body.dark-mode .filiere-card {
+    background-color: #1f2937;
+    color: #e4e6eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  body.dark-mode .filiere-title,
+  body.dark-mode .class-name,
+  body.dark-mode .card-title {
+    color: #e4e6eb;
+  }
+  
+  body.dark-mode .filiere-description,
+  body.dark-mode .text-gray-600 {
+    color: #9ca3af;
+  }
+  
+  /* Dark mode styles for tables */
+  body.dark-mode .table {
+    color: #e4e6eb;
+  }
+  
+  body.dark-mode .table th {
+    background-color: #2d3748;
+  }
+  
+  body.dark-mode .table td {
+    border-color: #374151;
+  }
+  
+  body.dark-mode .dataTables_wrapper {
+    background-color: #1f2937;
+    color: #e4e6eb;
+  }
+  
+  /* Dark mode styles for form elements */
+  body.dark-mode .form-control,
+  body.dark-mode .form-select {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e4e6eb;
+  }
+  
+  body.dark-mode .form-control:focus,
+  body.dark-mode .form-select:focus {
+    border-color: #4e73df;
+    background-color: #374151;
+  }
+  
+  /* Dark mode styles for modal */
+  body.dark-mode .modal-content {
+    background-color: #1f2937;
+    color: #e4e6eb;
+  }
+  
+  body.dark-mode .modal-header {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  }
+  
+  body.dark-mode .class-item {
+    background-color: #374151;
+  }
+  
+  body.dark-mode .class-item:hover {
+    background-color: #2d3748;
+  }
+  
+  /* Dark mode transitions */
+  body, .card, .table, .form-control, .modal-content, .navbar {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Dark mode toggle button */
+  .dark-mode-toggle {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dark-mode-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  body.dark-mode .dark-mode-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }

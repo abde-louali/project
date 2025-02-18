@@ -343,6 +343,9 @@ if (isset($_GET['class']) && isset($_GET['filiere'])) {
             margin-bottom: 5px;
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
 
 <body>

@@ -12,10 +12,11 @@ include_once '../Controller/AdminController.php';
 
 
 $adminController = new AdminController();
-$filieres = $adminController->displayFilieres(); 
+$filieres = $adminController->displayFilieres();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,14 +67,14 @@ $filieres = $adminController->displayFilieres();
             background: white;
             border-radius: 12px;
             border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             height: 100%;
         }
 
         .filiere-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
 
         .filiere-icon {
@@ -111,7 +112,7 @@ $filieres = $adminController->displayFilieres();
         .modal-content {
             border-radius: 15px;
             border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .modal-header {
@@ -143,13 +144,13 @@ $filieres = $adminController->displayFilieres();
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .class-item:hover {
             background: white;
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .class-icon {
@@ -168,26 +169,29 @@ $filieres = $adminController->displayFilieres();
             body {
                 padding: 1rem;
             }
-            
+
             .container {
                 margin-top: 1.5rem;
             }
-            
+
             .page-header {
                 margin-top: 1.5rem;
                 padding: 1.5rem;
             }
-            
+
             .page-title {
                 font-size: 1.5rem;
             }
-            
+
             .class-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
     </style>
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
+
 <body>
     <?php include 'header.php'; ?>
 
@@ -196,7 +200,7 @@ $filieres = $adminController->displayFilieres();
             <h1 class="page-title">Gestion des Filières</h1>
             <p class="page-subtitle">Consultez et gérez les classes par filière</p>
         </div>
-        
+
         <div class="row g-4">
             <?php if (!empty($filieres)): ?>
                 <?php foreach ($filieres as $filiere): ?>
@@ -248,20 +252,22 @@ $filieres = $adminController->displayFilieres();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.view-classes-btn').on('click', function () {
+        $(document).ready(function() {
+            $('.view-classes-btn').on('click', function() {
                 const filiere = $(this).data('filiere');
                 $('#filiereName').text(filiere);
 
                 $.ajax({
                     url: 'fetch_classes.php',
                     type: 'GET',
-                    data: { filiere: filiere },
-                    success: function (response) {
+                    data: {
+                        filiere: filiere
+                    },
+                    success: function(response) {
                         // Transformer la réponse en HTML pour la grille de classes
                         const classes = JSON.parse(response);
                         let classesHtml = '';
-                        
+
                         classes.forEach(function(className) {
                             classesHtml += `
                                 <div class="class-item" onclick="window.location.href='student_details.php?class=${encodeURIComponent(className)}&filiere=${encodeURIComponent(filiere)}'">
@@ -272,10 +278,10 @@ $filieres = $adminController->displayFilieres();
                                 </div>
                             `;
                         });
-                        
+
                         $('#classesList').html(classesHtml);
                     },
-                    error: function () {
+                    error: function() {
                         $('#classesList').html('<div class="alert alert-danger">Erreur lors du chargement des classes.</div>');
                     }
                 });
@@ -283,4 +289,5 @@ $filieres = $adminController->displayFilieres();
         });
     </script>
 </body>
+
 </html>

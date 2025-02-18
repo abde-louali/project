@@ -22,10 +22,11 @@ if (!$student) {
     exit();
 }
 
-function getDocumentPath($student, $docType) {
+function getDocumentPath($student, $docType)
+{
     $folderName = $student['cin'] . "_" . str_replace(' ', '_', $student['s_fname']) . "_" . str_replace(' ', '_', $student['s_lname']);
-    $path = "../uploads/" . str_replace(' ', '_', $student['filier_name']) . "/" . 
-            $student['code_class'] . "/" . $folderName . "/" . $docType;
+    $path = "../uploads/" . str_replace(' ', '_', $student['filier_name']) . "/" .
+        $student['code_class'] . "/" . $folderName . "/" . $docType;
     error_log("Checking path: " . $path);
     return $path;
 }
@@ -51,7 +52,8 @@ foreach ($documents as $type => $path) {
 }
 
 // Fonction pour obtenir l'icône appropriée selon le type de document
-function getDocumentIcon($path) {
+function getDocumentIcon($path)
+{
     if (!$path) return 'bi-file-earmark-x';
     $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
     return $extension === 'pdf' ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image';
@@ -71,6 +73,7 @@ if (isset($_SESSION['folder_message'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -212,17 +215,17 @@ if (isset($_SESSION['folder_message'])) {
             background-color: #f8fafc;
             flex-direction: column;
         }
-        
+
         .document-preview i {
             font-size: 3rem;
             color: #6b7280;
             margin-bottom: 1rem;
         }
-        
+
         .document-preview.pdf i {
             color: #ef4444;
         }
-        
+
         .document-name {
             font-size: 0.875rem;
             color: #4b5563;
@@ -324,16 +327,22 @@ if (isset($_SESSION['folder_message'])) {
         }
 
         @media (max-width: 768px) {
-            .info-grid, .documents-grid {
+
+            .info-grid,
+            .documents-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .main-container {
                 padding: 1rem;
             }
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
+
 <body>
     <?php include 'header.php'; ?>
 
@@ -384,12 +393,12 @@ if (isset($_SESSION['folder_message'])) {
                 <?php foreach ($documents as $type => $path): ?>
                     <div class="document-card">
                         <div class="document-preview <?php echo $path && pathinfo($path, PATHINFO_EXTENSION) === 'pdf' ? 'pdf' : ''; ?>"
-                             <?php if ($path && file_exists($path)): ?>
-                             data-bs-toggle="modal" 
-                             data-bs-target="#documentModal"
-                             data-document-path="<?php echo htmlspecialchars($path); ?>"
-                             data-document-type="<?php echo pathinfo($path, PATHINFO_EXTENSION) === 'pdf' ? 'pdf' : 'image'; ?>"
-                             <?php endif; ?>>
+                            <?php if ($path && file_exists($path)): ?>
+                            data-bs-toggle="modal"
+                            data-bs-target="#documentModal"
+                            data-document-path="<?php echo htmlspecialchars($path); ?>"
+                            data-document-type="<?php echo pathinfo($path, PATHINFO_EXTENSION) === 'pdf' ? 'pdf' : 'image'; ?>"
+                            <?php endif; ?>>
                             <?php if ($path && file_exists($path)): ?>
                                 <?php
                                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -406,10 +415,16 @@ if (isset($_SESSION['folder_message'])) {
                         </div>
                         <h3 class="document-title">
                             <?php
-                            switch($type) {
-                                case 'bac_img': echo 'Baccalauréat'; break;
-                                case 'birth_img': echo 'Acte de naissance'; break;
-                                case 'id_card_img': echo 'Carte d\'identité'; break;
+                            switch ($type) {
+                                case 'bac_img':
+                                    echo 'Baccalauréat';
+                                    break;
+                                case 'birth_img':
+                                    echo 'Acte de naissance';
+                                    break;
+                                case 'id_card_img':
+                                    echo 'Carte d\'identité';
+                                    break;
                             }
                             ?>
                         </h3>
@@ -439,30 +454,31 @@ if (isset($_SESSION['folder_message'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.querySelectorAll('.document-preview[data-document-path]').forEach(preview => {
-        preview.addEventListener('click', function() {
-            const path = this.getAttribute('data-document-path');
-            const type = this.getAttribute('data-document-type');
-            const modalBody = document.querySelector('#documentModal .modal-body');
-            
-            if (!path) return;
+        document.querySelectorAll('.document-preview[data-document-path]').forEach(preview => {
+            preview.addEventListener('click', function() {
+                const path = this.getAttribute('data-document-path');
+                const type = this.getAttribute('data-document-type');
+                const modalBody = document.querySelector('#documentModal .modal-body');
 
-            modalBody.innerHTML = '';
-            if (type === 'pdf') {
-                modalBody.classList.add('pdf-preview');
-                const embed = document.createElement('embed');
-                embed.setAttribute('src', path);
-                embed.classList.add('pdf-embed');
-                modalBody.appendChild(embed);
-            } else {
-                modalBody.classList.remove('pdf-preview');
-                const img = document.createElement('img');
-                img.setAttribute('src', path);
-                img.classList.add('modal-img');
-                modalBody.appendChild(img);
-            }
+                if (!path) return;
+
+                modalBody.innerHTML = '';
+                if (type === 'pdf') {
+                    modalBody.classList.add('pdf-preview');
+                    const embed = document.createElement('embed');
+                    embed.setAttribute('src', path);
+                    embed.classList.add('pdf-embed');
+                    modalBody.appendChild(embed);
+                } else {
+                    modalBody.classList.remove('pdf-preview');
+                    const img = document.createElement('img');
+                    img.setAttribute('src', path);
+                    img.classList.add('modal-img');
+                    modalBody.appendChild(img);
+                }
+            });
         });
-    });
     </script>
 </body>
+
 </html>

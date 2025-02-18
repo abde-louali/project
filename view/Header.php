@@ -6,6 +6,7 @@ if (!isset($_SESSION["username"])) {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -160,7 +161,11 @@ if (!isset($_SESSION["username"])) {
             }
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/darkmood.css">
+    <script src="../assets/js/darkmood.js"></script>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
@@ -168,11 +173,11 @@ if (!isset($_SESSION["username"])) {
                 <img src="../assets/img/ofppt_logo.png" alt="Logo OFPPT">
                 <span>OFPPT</span>
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -192,7 +197,7 @@ if (!isset($_SESSION["username"])) {
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> 
+                            <i class="bi bi-person-circle"></i>
                             <?php echo htmlspecialchars($_SESSION['username']); ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -201,7 +206,9 @@ if (!isset($_SESSION["username"])) {
                                     <i class="bi bi-person"></i> Mon Profile
                                 </a>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form action="../Controller/UserController.php?action=logout" method="POST" style="margin: 0;">
                                     <button type="submit" class="dropdown-item text-danger">
@@ -220,4 +227,5 @@ if (!isset($_SESSION["username"])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
