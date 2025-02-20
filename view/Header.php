@@ -195,6 +195,11 @@ if (!isset($_SESSION["username"])) {
                             <i class="bi bi-people"></i> Classes
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link theme-toggle" onclick="toggleTheme()">
+                            <i id="themeIcon" class="bi bi-sun-fill"></i>
+                        </button>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i>
