@@ -198,7 +198,7 @@ $studentCount = count($students);
                     <tr>
                         <th>CIN</th>
                         <th>Nom Complet</th>
-                        <th>Statut de Vérification</th>
+
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -207,19 +207,7 @@ $studentCount = count($students);
                         <tr>
                             <td><?php echo htmlspecialchars($student['cin']); ?></td>
                             <td><?php echo htmlspecialchars($student['s_fname'] . ' ' . $student['s_lname']); ?></td>
-                            <td>
-                                <?php if ($student['verified']): ?>
-                                    <span class="status-badge status-verified">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Vérifié
-                                    </span>
-                                <?php else: ?>
-                                    <span class="status-badge status-pending">
-                                        <i class="bi bi-clock me-1"></i>
-                                        En attente
-                                    </span>
-                                <?php endif; ?>
-                            </td>
+
                             <td>
                                 <a href="student_profile.php?cin=<?php echo urlencode($student['cin']); ?>"
                                     class="btn btn-primary btn-view">

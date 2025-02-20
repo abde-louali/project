@@ -1,8 +1,10 @@
 <?php
 include_once '../Model/UserModel.php';
 
-class UserController {
-    public function login($username, $password) {
+class UserController
+{
+    public function login($username, $password)
+    {
         $userModel = new UserModel();
         $user = $userModel->login($username, $password);
 
@@ -24,7 +26,8 @@ class UserController {
         exit;
     }
 
-    public function logout() {
+    public function logout()
+    {
         session_start();
         session_unset();
         session_destroy();
@@ -38,4 +41,3 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     $userController = new UserController();
     $userController->logout();
 }
-?>
